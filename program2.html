@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>3D Esports Stage</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #03050a;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+/* MAIN 3D WORLD */
+.scene {
+    width: 100vw;
+    height: 100vh;
+    perspective: 1200px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* FLOOR */
+.floor {
+    position: absolute;
+    width: 160%;
+    height: 100%;
+    left: -30%;
+    top: 30%;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(255,255,255,.03) 0px,
+            rgba(255,255,255,.03) 2px,
+            transparent 2px,
+            transparent 80px
+        ),
+        linear-gradient(#090d18, #010204);
+
+    transform:
+        rotateX(65deg)
+        translateZ(-150px);
+
+    box-shadow:
+        inset 0 0 100px #000,
+        0 -20px 100px rgba(0,80,255,.2);
+}
+
+/* STAGE */
+.stage {
+    position: absolute;
+    width: 700px;
+    height: 350px;
+    left: 50%;
+    top: 40%;
+    transform:
+        translate(-50%, -50%)
+        rotateX(8deg)
+        translateZ(80px);
+
+    transform-style: preserve-3d;
+}
+
+/* PLATFORM */
+.platform {
+    position: absolute;
+    width: 600px;
+    height: 230px;
+    left: 50px;
+    top: 100px;
+
+    background: linear-gradient(
+        135deg,
+        #151c2c,
+        #05070d
+    );
+
+    border: 3px solid #1c65ff;
+
+    transform:
+        rotateX(70deg)
+        translateZ(0);
+
+    box-shadow:
+        0 0 20px #0066ff,
+        0 0 60px rgba(0,100,255,.4);
+}
+
+/* BACK WALL */
+.back-wall {
+    position: absolute;
+    width: 620px;
+    height: 280px;
+    left: 40px;
+    top: -40px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #070b15,
+            #020308
+        );
+
+    border: 3px solid #1b4fff;
+
+    transform: translateZ(-80px);
+
+    box-shadow:
+        0 0 30px rgba(0,80,255,.5);
+}
+
+/* MAIN LED SCREEN */
+.main-screen {
+    position: absolute;
+    width: 390px;
+    height: 190px;
+
+    left: 155px;
+    top: 5px;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #183cff,
+            #061029 50%,
+            #02040a
+        );
+
+    border: 7px solid #111827;
+
+    box-shadow:
+        0 0 20px #004cff,
+        0 0 60px rgba(0,80,255,.8);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transform: translateZ(10px);
+}
+
+/* SCREEN CONTENT */
+.main-screen h1 {
+    color: white;
+    font-size: 38px;
+    letter-spacing: 8px;
+    text-shadow:
+        0 0 10px #00aaff,
+        0 0 30px #0066ff;
+}
+
+.main-screen p {
+    position: absolute;
+    bottom: 25px;
+    color: #8ab4ff;
+    letter-spacing: 5px;
+}
+
+/* LEFT SCREEN */
+.left-screen {
+    position: absolute;
+    width: 90px;
+    height: 210px;
+
+    left: 45px;
+    top: -10px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ff172d,
+            #3b0010,
+            #050509
+        );
+
+    border: 5px solid #111;
+
+    transform:
+        rotateY(18deg)
+        translateZ(5px);
+
+    box-shadow:
+        0 0 30px red;
+}
+
+/* RIGHT SCREEN */
+.right-screen {
+    position: absolute;
+    width: 90px;
+    height: 210px;
+
+    right: 45px;
+    top: -10px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #146aff,
+            #00133b,
+            #050509
+        );
+
+    border: 5px solid #111;
+
+    transform:
+        rotateY(-18deg)
+        translateZ(5px);
+
+    box-shadow:
+        0 0 30px #0066ff;
+}
+
+/* SIDE LED BARS */
+.led {
+    position: absolute;
+    width: 12px;
+    height: 240px;
+    top: -20px;
+
+    background: #00aaff;
+
+    box-shadow:
+        0 0 10px #00aaff,
+        0 0 30px #0066ff;
+}
+
+.led.left {
+    left: 120px;
+}
+
+.led.right {
+    right: 120px;
+}
+
+/* DESK / PLAYER AREA */
+.player-area {
+    position: absolute;
+    width: 300px;
+    height: 70px;
+
+    left: 200px;
+    top: 170px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #111,
+            #242a35,
+            #111
+        );
+
+    border: 3px solid #333;
+
+    transform:
+        translateZ(70px)
+        rotateX(-5deg);
+
+    box-shadow:
+        0 0 30px rgba(0,0,0,.8);
+}
+
+/* COMPUTERS */
+.pc {
+    position: absolute;
+    width: 45px;
+    height: 28px;
+
+    top: 15px;
+
+    background: #050505;
+
+    border: 2px solid #00aaff;
+
+    box-shadow: 0 0 10px #0088ff;
+}
+
+.pc:nth-child(1) {
+    left: 25px;
+}
+
+.pc:nth-child(2) {
+    left: 85px;
+}
+
+.pc:nth-child(3) {
+    left: 145px;
+}
+
+.pc:nth-child(4) {
+    left: 205px;
+}
+
+/* AUDIENCE */
+.audience {
+    position: absolute;
+    width: 100%;
+    height: 45%;
+    bottom: -5%;
+    left: 0;
+
+    transform:
+        perspective(600px)
+        rotateX(35deg);
+
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+
+    opacity: .8;
+}
+
+.row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.person {
+    width: 14px;
+    height: 20px;
+
+    background: #202633;
+
+    border-radius: 50% 50% 20% 20%;
+
+    box-shadow:
+        0 0 5px rgba(50,100,255,.5);
+}
+
+/* RED LIGHT */
+.red-light {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+
+    left: -100px;
+    top: 100px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,0,0,.35),
+            transparent 65%
+        );
+
+    filter: blur(20px);
+}
+
+/* BLUE LIGHT */
+.blue-light {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+
+    right: -150px;
+    top: 80px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(0,80,255,.35),
+            transparent 65%
+        );
+
+    filter: blur(20px);
+}
+
+/* SPOTLIGHTS */
+.spot {
+    position: absolute;
+    width: 5px;
+    height: 600px;
+
+    top: -100px;
+
+    transform-origin: top;
+
+    background: linear-gradient(
+        transparent,
+        rgba(0,150,255,.3),
+        transparent
+    );
+
+    filter: blur(8px);
+
+    animation: moveLight 4s infinite alternate;
+}
+
+.spot.one {
+    left: 25%;
+    transform: rotate(25deg);
+}
+
+.spot.two {
+    left: 50%;
+}
+
+.spot.three {
+    right: 25%;
+    transform: rotate(-25deg);
+}
+
+@keyframes moveLight {
+
+    from {
+        opacity: .3;
+    }
+
+    to {
+        opacity: .8;
+    }
+
+}
+
+/* TITLE */
+.title {
+    position: absolute;
+    top: 30px;
+    width: 100%;
+    text-align: center;
+
+    color: white;
+
+    font-size: 18px;
+    letter-spacing: 5px;
+
+    text-shadow:
+        0 0 10px #0088ff;
+}
+
+/* RESPONSIVE */
+@media(max-width: 800px) {
+
+    .stage {
+        transform:
+            translate(-50%, -50%)
+            scale(.65);
+    }
+
+    .audience {
+        transform:
+            perspective(600px)
+            rotateX(35deg)
+            scale(.8);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="scene">
+
+    <div class="title">
+        ESPORTS CHAMPIONSHIP
+    </div>
+
+    <!-- LIGHTS -->
+    <div class="red-light"></div>
+    <div class="blue-light"></div>
+
+    <div class="spot one"></div>
+    <div class="spot two"></div>
+    <div class="spot three"></div>
+
+    <!-- FLOOR -->
+    <div class="floor"></div>
+
+    <!-- STAGE -->
+    <div class="stage">
+
+        <div class="back-wall"></div>
+
+        <!-- MAIN SCREEN -->
+        <div class="main-screen">
+            <div>
+                <h1>ESPORTS</h1>
+                <p>GRAND FINALS</p>
+            </div>
+        </div>
+
+        <!-- SIDE SCREENS -->
+        <div class="left-screen"></div>
+        <div class="right-screen"></div>
+
+        <!-- LED LIGHT BARS -->
+        <div class="led left"></div>
+        <div class="led right"></div>
+
+        <!-- PLAYER DESK -->
+        <div class="player-area">
+
+            <div class="pc"></div>
+            <div class="pc"></div>
+            <div class="pc"></div>
+            <div class="pc"></div>
+
+        </div>
+
+        <!-- PLATFORM -->
+        <div class="platform"></div>
+
+    </div>
+
+    <!-- AUDIENCE -->
+    <div class="audience">
+
+        <div class="row">
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+            <div class="person"></div>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
